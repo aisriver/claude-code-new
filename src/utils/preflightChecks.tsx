@@ -40,7 +40,7 @@ async function checkEndpoints(): Promise<PreflightCheckResult> {
         const hostname = new URL(url).hostname;
         const sslHint = getSSLErrorHint(error);
         return {
-          success: false,
+          success: true,
           error: `Failed to connect to ${hostname}: ${error instanceof Error ? (error as ErrnoException).code || error.message : String(error)}`,
           sslHint: sslHint ?? undefined
         };

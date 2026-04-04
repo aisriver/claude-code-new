@@ -30,6 +30,9 @@ type OAuthStatus = {
   state: 'platform_setup';
 } // Show platform setup info (Bedrock/Vertex/Foundry)
 | {
+  state: 'openrouter_setup';
+} // Show OpenRouter env-based setup (no OAuth here)
+| {
   state: 'ready_to_start';
 } // Flow started, waiting for browser to open
 | {
@@ -119,14 +122,16 @@ export function ConsoleOAuthFlow({
     isActive: oauthStatus.state === 'success' && mode !== 'setup-token'
   });
 
-  // Handle Enter to continue from platform setup
+  // Handle Enter to continue from platform / OpenRouter setup
   useKeybinding('confirm:yes', () => {
     setOAuthStatus({
       state: 'idle'
     });
   }, {
     context: 'Confirmation',
-    isActive: oauthStatus.state === 'platform_setup'
+    isActive:
+      oauthStatus.state === 'platform_setup' ||
+      oauthStatus.state === 'openrouter_setup'
   });
 
   // Handle Enter to retry on error state
@@ -345,7 +350,7 @@ type OAuthStatusMessageProps = {
   setLoginWithClaudeAi: (value: boolean) => void;
 };
 function OAuthStatusMessage(t0) {
-  const $ = _c(51);
+  const $ = _c(62);
   const {
     oauthStatus,
     mode,
@@ -405,6 +410,9 @@ function OAuthStatusMessage(t0) {
           t6 = [t4, t5, {
             label: <Text>3rd-party platform ·{" "}<Text dimColor={true}>Amazon Bedrock, Microsoft Foundry, or Vertex AI</Text>{"\n"}</Text>,
             value: "platform"
+          }, {
+            label: <Text>OpenRouter ·{" "}<Text dimColor={true}>API key + Anthropic-compatible base URL</Text>{"\n"}</Text>,
+            value: "openrouter"
           }];
           $[5] = t6;
         } else {
@@ -417,6 +425,11 @@ function OAuthStatusMessage(t0) {
                 logEvent("tengu_oauth_platform_selected", {});
                 setOAuthStatus({
                   state: "platform_setup"
+                });
+              } else if (value_0 === "openrouter") {
+                logEvent("tengu_oauth_openrouter_selected", {});
+                setOAuthStatus({
+                  state: "openrouter_setup"
                 });
               } else {
                 setOAuthStatus({
@@ -447,6 +460,87 @@ function OAuthStatusMessage(t0) {
           t8 = $[11];
         }
         return t8;
+      }
+    case "openrouter_setup":
+      {
+        let t1;
+        if ($[51] === Symbol.for("react.memo_cache_sentinel")) {
+          t1 = <Text bold={true}>Using OpenRouter</Text>;
+          $[51] = t1;
+        } else {
+          t1 = $[51];
+        }
+        let t2;
+        if ($[52] === Symbol.for("react.memo_cache_sentinel")) {
+          t2 = <Text>OpenRouter speaks the same Messages API as Anthropic. Configure environment variables, then restart Claude Code. OAuth login below does not apply — use your OpenRouter API key instead.</Text>;
+          $[52] = t2;
+        } else {
+          t2 = $[52];
+        }
+        let t3;
+        if ($[53] === Symbol.for("react.memo_cache_sentinel")) {
+          t3 = <Text bold={true}>Required:</Text>;
+          $[53] = t3;
+        } else {
+          t3 = $[53];
+        }
+        let t4;
+        if ($[54] === Symbol.for("react.memo_cache_sentinel")) {
+          t4 = <Text>· export ANTHROPIC_BASE_URL=&quot;https://openrouter.ai/api&quot;</Text>;
+          $[54] = t4;
+        } else {
+          t4 = $[54];
+        }
+        let t5;
+        if ($[55] === Symbol.for("react.memo_cache_sentinel")) {
+          t5 = <Text>· export ANTHROPIC_AUTH_TOKEN=&quot;&lt;your-openrouter-api-key&gt;&quot;</Text>;
+          $[55] = t5;
+        } else {
+          t5 = $[55];
+        }
+        let t6;
+        if ($[56] === Symbol.for("react.memo_cache_sentinel")) {
+          t6 = <Text>· export ANTHROPIC_API_KEY=&quot;&quot;{" "}<Text dimColor={true}>(must be empty to avoid falling back to Anthropic)</Text></Text>;
+          $[56] = t6;
+        } else {
+          t6 = $[56];
+        }
+        let t7;
+        if ($[57] === Symbol.for("react.memo_cache_sentinel")) {
+          t7 = <Text bold={true}>Optional model routing (examples):</Text>;
+          $[57] = t7;
+        } else {
+          t7 = $[57];
+        }
+        let t8;
+        if ($[58] === Symbol.for("react.memo_cache_sentinel")) {
+          t8 = <Text dimColor={true}>· ANTHROPIC_DEFAULT_SONNET_MODEL, ANTHROPIC_DEFAULT_OPUS_MODEL, ANTHROPIC_DEFAULT_HAIKU_MODEL — use OpenRouter model IDs such as anthropic/claude-sonnet-4.6</Text>;
+          $[58] = t8;
+        } else {
+          t8 = $[58];
+        }
+        let t9;
+        if ($[59] === Symbol.for("react.memo_cache_sentinel")) {
+          t9 = <Text bold={true}>Documentation:</Text>;
+          $[59] = t9;
+        } else {
+          t9 = $[59];
+        }
+        let t10;
+        if ($[60] === Symbol.for("react.memo_cache_sentinel")) {
+          t10 = <Link url="https://openrouter.ai/docs/guides/coding-agents/claude-code-integration">https://openrouter.ai/docs/guides/coding-agents/claude-code-integration</Link>;
+          $[60] = t10;
+        } else {
+          t10 = $[60];
+        }
+        let t11;
+        if ($[61] === Symbol.for("react.memo_cache_sentinel")) {
+          t11 = <Box flexDirection="column" gap={1} marginTop={1}>{t1}<Box flexDirection="column" gap={1}>{t2}<Box flexDirection="column" gap={1} marginTop={1}>{t3}{t4}{t5}{t6}</Box><Box flexDirection="column" gap={1} marginTop={1}>{t7}{t8}</Box><Box flexDirection="column" marginTop={1}>{t9}<Text>{t10}</Text></Box><Box marginTop={1}><Text dimColor={true}>Press <Text bold={true}>Enter</Text> to go back to login options.</Text></Box></Box></Box>;
+          $[61] = t11;
+        } else {
+          t11 = $[61];
+        }
+        return t11;
       }
     case "platform_setup":
       {
